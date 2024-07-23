@@ -1,4 +1,14 @@
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <linux/kernel.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <libzfs_core.h>
+#include <libzfs/sys/nvpair.h>   
 #include "jni_Tools.h"
 
 JNIEXPORT jstring JNICALL Java_jni_Tools_bar(JNIEnv *env, jobject thisObject)
@@ -64,6 +74,10 @@ JNIEXPORT jobject JNICALL Java_jni_Tools_getFailedChunks
     if (arrayListAdd == NULL) {
         return NULL; // Method not found
     }
+
+    /**
+     * MLEC logics here
+     */
 
     // Create a new DnodeAttributes object and set its path field
     jobject dnodeObj = createDnodeAttributes(env, poolName);
