@@ -8,6 +8,19 @@ public class Runner {
         
         List<DnodeAttributes> atrributes = tools.getFailedChunks("pool", 54);
         System.out.println("Attribute size " + atrributes.size());
-        System.out.println(atrributes.get(0).path);
+        
+        // print dnode
+        for (DnodeAttributes dnode : atrributes) {
+            System.out.println("objset: " + dnode.objset);
+            System.out.println("object: " + dnode.object);
+            System.out.println("type: " + dnode.type);
+            System.out.println("path: " + dnode.path);
+            System.out.println("fsize: " + dnode.fsize);
+            System.out.println("numStripes: " + dnode.numStripes);
+            System.out.println("numRemainderStripes: " + dnode.numRemainderStripes);
+            System.out.println("dcols: " + dnode.dcols);
+            System.out.println("nparity: " + dnode.nparity);
+            System.out.println("childStatus: " + dnode.childStatus);
+        }
     }
 }
