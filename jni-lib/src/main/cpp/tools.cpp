@@ -57,6 +57,28 @@ int get_from_nvlist_set_field_int64_t(JNIEnv *env, jclass dnodeClass, jobject dn
     return type;
 }
 
+jobject intToInteger(JNIEnv *env, int value) {
+    // Find the Integer class
+    jclass integerClass = env->FindClass("java/lang/Integer");
+    if (integerClass == NULL) {
+        return NULL; // Class not found
+    }
+
+    // Get the constructor method ID for Integer(int value)
+    jmethodID constructor = env->GetMethodID(integerClass, "<init>", "(I)V");
+    if (constructor == NULL) {
+        return NULL; // Constructor not found
+    }
+
+    // Create a new Integer object
+    jobject integerObj = env->NewObject(integerClass, constructor, value);
+    if (integerObj == NULL) {
+        return NULL; // Object creation failed
+    }
+
+    return integerObj;
+}
+
 // Utility function to create a new DnodeAttributes object and set its fields
 jobject createDnodeAttributes(JNIEnv *env, nvlist_t *attributes) {
     // Find the DnodeAttributes class
@@ -87,8 +109,8 @@ jobject createDnodeAttributes(JNIEnv *env, nvlist_t *attributes) {
         return NULL; // Field not found
     }
     // Get the path attribute
-    char path[MAXPATHLEN * 2];
-    nvlist_lookup_string(attributes, "path", (char **) &path);
+    char *path;
+    nvlist_lookup_string(attributes, "path", &path);
     jstring j_path = env->NewStringUTF(path);
     // Set the path field with the given path
     env->SetObjectField(dnodeObj, pathField, j_path);
@@ -103,7 +125,7 @@ jobject createDnodeAttributes(JNIEnv *env, nvlist_t *attributes) {
     int64_t dcols = get_from_nvlist_set_field_int64_t(env, dnodeClass, dnodeObj, attributes, "dcols", "dcols");
     get_from_nvlist_set_field_int64_t(env, dnodeClass, dnodeObj, attributes, "nparity", "nparity");
 
-    int64_t child_status[dcols];
+    int64_t *child_status;
     // Get the childStatus field, list of integer
     jfieldID childStatusField = env->GetFieldID(dnodeClass, "childStatus", "Ljava/util/List;");
     if (childStatusField == NULL) {
@@ -111,7 +133,7 @@ jobject createDnodeAttributes(JNIEnv *env, nvlist_t *attributes) {
     }
     // Get the childStatus attribute
     unsigned int nelem;
-    nvlist_lookup_int64_array(attributes, "child_status", (int64_t **) &child_status, &nelem);
+    nvlist_lookup_int64_array(attributes, "child_status", &child_status, &nelem);
     // Find the ArrayList class
     jclass arrayListClass = env->FindClass("java/util/ArrayList");
     if (arrayListClass == NULL) {
@@ -137,8 +159,11 @@ jobject createDnodeAttributes(JNIEnv *env, nvlist_t *attributes) {
     }
 
     for (int i = 0; i < dcols; i++) {
-      env->CallBooleanMethod(arrayListObj, arrayListAdd, dnodeObj);
+      env->CallBooleanMethod(arrayListObj, arrayListAdd, intToInteger(env, child_status[i]));
     }
+
+    // Set the childStatus field with the given childStatus
+    env->SetObjectField(dnodeObj, childStatusField, arrayListObj);
 
     return dnodeObj;
 }

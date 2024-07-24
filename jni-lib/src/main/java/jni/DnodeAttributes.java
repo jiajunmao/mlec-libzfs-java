@@ -15,5 +15,4 @@ public class DnodeAttributes {
     public int nparity;
     public List<Integer> childStatus;
     
-
 }

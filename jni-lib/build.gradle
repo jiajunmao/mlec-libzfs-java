@@ -1,6 +1,7 @@
 plugins {
   id 'java'
   id 'java-library'
+  id 'maven-publish'
 }
 
 dependencies {
@@ -47,4 +48,17 @@ processResources {
 tasks.withType(Test) {
   systemProperty "java.library.path", "build/natives/lib"
   testLogging.showStandardStreams = false
+}
+
+publishing {
+
+  publications {
+      maven(MavenPublication) {
+          groupId = 'com.mlec.libzfs'
+          artifactId = 'library'
+          version = '1.0'
+
+          from components.java
+      }
+  }
 }
