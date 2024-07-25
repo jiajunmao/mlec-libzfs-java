@@ -8,11 +8,7 @@ public class Tools {
             System.loadLibrary("tools");
     }
 
-    public String foo() {
-        return "foo";
-    }
-
-    public native String bar();
-
     public native List<DnodeAttributes> getFailedChunks(String poolName, int objsetId);
+
+    public native void writeRepairData(DnodeAttributes dnode, int stripeId, int colIdx, byte[] data);
 }

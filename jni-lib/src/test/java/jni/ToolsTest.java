@@ -8,7 +8,5 @@ class ToolsTest {
     @Test
     void testFooBar() {
         Tools tools = new Tools();
-        assertEquals(tools.foo(), "foo");
-        assertEquals(tools.bar(), "bar");
     }
 }

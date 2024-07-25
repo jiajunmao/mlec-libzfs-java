@@ -11,12 +11,6 @@
 #include <libzfs/sys/nvpair.h>   
 #include "jni_Tools.h"
 
-JNIEXPORT jstring JNICALL Java_jni_Tools_bar(JNIEnv *env, jobject thisObject)
-{
-  std::string res("bar");
-  return env->NewStringUTF(res.c_str());
-}
-
 int mlec_libzfs_all_failed_chunks(const char *pool, uint64_t objset, nvlist_t **outnvl) {
     if (libzfs_core_init() != 0) {
         fprintf(stderr, "Can't init libzfs\n");
