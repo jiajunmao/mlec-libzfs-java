@@ -10,7 +10,9 @@ public class Runner {
         System.out.println("Attribute size " + atrributes.size());
         
         // print dnode
+        DnodeAttributes repairDnode = null;
         for (DnodeAttributes dnode : atrributes) {
+            repairDnode = dnode;
             System.out.println("objset: " + dnode.objset);
             System.out.println("object: " + dnode.object);
             System.out.println("type: " + dnode.type);
@@ -22,5 +24,12 @@ public class Runner {
             System.out.println("nparity: " + dnode.nparity);
             System.out.println("childStatus: " + dnode.childStatus);
         }
+
+        System.out.println("====================");
+
+        // Write the repair data
+        assert repairDnode != null;
+        String testData = "Hello World!";
+        tools.writeRepairData("pool", repairDnode, 0, 0, testData.getBytes());
     }
 }

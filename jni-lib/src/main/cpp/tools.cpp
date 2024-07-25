@@ -229,6 +229,11 @@ void throwRuntimeException(JNIEnv *env, const char *message) {
 JNIEXPORT void JNICALL Java_jni_Tools_writeRepairData
   (JNIEnv *env, jobject thisObj, jstring poolName, jobject dnodeObj, jint stripeIdx, jint colIdx, jbyteArray data) {
     // TODO
+    if (libzfs_core_init() != 0) {
+        fprintf(stderr, "Can't init libzfs\n");
+        throwRuntimeException(env, "Can't init libzfs");
+    }
+
     const char *cPoolName = env->GetStringUTFChars(poolName, NULL);
 
     jclass dnodeClass = env->GetObjectClass(dnodeObj);
@@ -246,6 +251,11 @@ JNIEXPORT void JNICALL Java_jni_Tools_writeRepairData
     nvlist_add_uint64(innvl, "dn_object_id", objectValue);
     nvlist_add_uint64(innvl, "blk_id", 0);
     nvlist_add_uint64(innvl, "col_idx", colIdx);
+
+    printf("objset_id %lu\n", objsetValue);
+    printf("dn_object_id %lu\n", objectValue);
+    printf("blk_id %d\n", 0);
+    printf("col_idx %d\n", colIdx);
     
     unsigned char *cData = (unsigned char*)(env->GetByteArrayElements(data, NULL));
     nvlist_add_byte_array(innvl, "data", cData, env->GetArrayLength(data));
@@ -256,6 +266,8 @@ JNIEXPORT void JNICALL Java_jni_Tools_writeRepairData
         throwRuntimeException(env, "Error while calling receive data");
     }
 
+    nvlist_free(innvl);
+    libzfs_core_fini();
     return;
 
 }
