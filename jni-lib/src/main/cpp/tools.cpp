@@ -221,3 +221,44 @@ JNIEXPORT jobject JNICALL Java_jni_Tools_getFailedChunks
     // Return the ArrayList
     return arrayListObj;
 }
+
+void throwRuntimeException(JNIEnv *env, const char *message) {
+    jclass runtimeExceptionClass = env->FindClass("java/lang/RuntimeException");
+    if (runtimeExceptionClass != NULL) {
+        env->ThrowNew(runtimeExceptionClass, message);
+    }
+}
+
+JNIEXPORT void JNICALL Java_jni_Tools_writeRepairData
+  (JNIEnv *env, jobject thisObj, jstring poolName, jobject dnodeObj, jint stripeIdx, jint colIdx, jbyteArray data) {
+    // TODO
+    const char *cPoolName = env->GetStringUTFChars(poolName, NULL);
+
+    jclass dnodeClass = env->GetObjectClass(dnodeObj);
+
+    jfieldID objsetFieldID = env->GetFieldID(dnodeClass, "objset", "I");
+    jfieldID objectFieldID = env->GetFieldID(dnodeClass, "object", "I");
+    
+    uint64_t objsetValue = env->GetIntField(dnodeObj, objsetFieldID);
+    uint64_t objectValue = env->GetIntField(dnodeObj, objectFieldID);
+    
+    nvlist_t *innvl;
+    nvlist_alloc(&innvl, NV_UNIQUE_NAME, 0);
+
+    nvlist_add_uint64(innvl, "objset_id", objsetValue);
+    nvlist_add_uint64(innvl, "dn_object_id", objectValue);
+    nvlist_add_uint64(innvl, "blk_id", 0);
+    nvlist_add_uint64(innvl, "col_idx", colIdx);
+    
+    unsigned char *cData = (unsigned char*)(env->GetByteArrayElements(data, NULL));
+    nvlist_add_byte_array(innvl, "data", cData, env->GetArrayLength(data));
+
+    if (lzc_mlec_receive_data(cPoolName, innvl)) {
+        printf("Error while calling receive data\n");
+        nvlist_free(innvl);
+        throwRuntimeException(env, "Error while calling receive data");
+    }
+
+    return;
+
+}

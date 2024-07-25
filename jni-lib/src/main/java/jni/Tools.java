@@ -10,5 +10,5 @@ public class Tools {
 
     public native List<DnodeAttributes> getFailedChunks(String poolName, int objsetId);
 
-    public native void writeRepairData(DnodeAttributes dnode, int stripeId, int colIdx, byte[] data);
+    public native void writeRepairData(String poolName, DnodeAttributes dnode, int stripeIdx, int colIdx, byte[] data);
 }
