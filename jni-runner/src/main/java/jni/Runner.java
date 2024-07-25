@@ -6,7 +6,7 @@ public class Runner {
     public static void main(String[] args) {
         Tools tools = new Tools();
         
-        List<DnodeAttributes> atrributes = tools.getFailedChunks("pool", 54);
+        List<DnodeAttributes> atrributes = tools.getFailedChunks("pool");
         System.out.println("Attribute size " + atrributes.size());
         
         // print dnode

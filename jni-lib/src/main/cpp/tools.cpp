@@ -11,7 +11,7 @@
 #include <libzfs/sys/nvpair.h>   
 #include "jni_Tools.h"
 
-int mlec_libzfs_all_failed_chunks(const char *pool, uint64_t objset, nvlist_t **outnvl) {
+int mlec_libzfs_all_failed_chunks(const char *pool, nvlist_t **outnvl) {
     if (libzfs_core_init() != 0) {
         fprintf(stderr, "Can't init libzfs\n");
         return 101;
@@ -22,9 +22,6 @@ int mlec_libzfs_all_failed_chunks(const char *pool, uint64_t objset, nvlist_t **
         fprintf(stderr, "Failed to allocate nvlist\n");
         return EXIT_FAILURE;
     }
-
-    // Prep the input
-    nvlist_add_uint64(innvl, "objset_id", objset);
 
     int ret = lzc_mlec_get_failed_chunks(pool, innvl, outnvl);
     if (ret) {
@@ -163,7 +160,7 @@ jobject createDnodeAttributes(JNIEnv *env, nvlist_t *attributes) {
 }
 
 JNIEXPORT jobject JNICALL Java_jni_Tools_getFailedChunks
-  (JNIEnv *env, jobject thisObj, jstring poolName, jint objsetId) {
+  (JNIEnv *env, jobject thisObj, jstring poolName) {
     // Find the ArrayList class
     jclass arrayListClass = env->FindClass("java/util/ArrayList");
     if (arrayListClass == NULL) {
@@ -194,7 +191,7 @@ JNIEXPORT jobject JNICALL Java_jni_Tools_getFailedChunks
     const char *cPoolName = env->GetStringUTFChars(poolName, NULL);
 
     nvlist_t *outnvl;
-    if (mlec_libzfs_all_failed_chunks(cPoolName, objsetId, &outnvl)) {
+    if (mlec_libzfs_all_failed_chunks(cPoolName, &outnvl)) {
       nvlist_free(outnvl);
       printf("Error calling libzfs failed chunks\n");
       return NULL;
