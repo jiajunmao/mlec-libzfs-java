@@ -21,8 +21,18 @@ sourceSets {
   }
 }
 
+task generateJniHeaders(type: Exec) {
+  dependsOn compileJava
+  def outputDir = file("src/main/include")
+  doFirst {
+      outputDir.mkdirs()
+  }
+  commandLine 'javac', '-h', outputDir, 'src/main/java/jni/Tools.java', 'src/main/java/jni/DnodeAttributes.java', 'src/main/java/jni/LibraryLoader.java'
+}
+
 compileJava {
-  options.compilerArgs += ["-h", file("src/main/include")]
+  // options.compilerArgs += ["-h", file("src/main/include")]
+  finalizedBy generateJniHeaders
 }
 
 task compileJNI {
