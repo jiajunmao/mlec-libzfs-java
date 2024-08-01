@@ -30,4 +30,15 @@ public class DnodeAttributes {
         sb.append("childStatus: ").append(childStatus).append("\n");
         return sb.toString();
     }
+
+    public int numFailedCols() {
+        int failedCols = 0;
+        for (int status : childStatus) {
+            if (status != 0) {
+                failedCols++;
+            }
+        }
+        return failedCols;
+    }
+
 }
