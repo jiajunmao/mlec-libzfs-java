@@ -199,7 +199,7 @@ JNIEXPORT jobject JNICALL Java_jni_Tools_getFailedChunks
     
     nvpair_t *pair = NULL;
     while ((pair = nvlist_next_nvpair(outnvl, pair)) != NULL) {
-        printf("dnode %s\n", nvpair_name(pair));
+        // printf("dnode %s\n", nvpair_name(pair));
 
         // Allocate a new dnode attribute
         nvlist_t *attributes;
