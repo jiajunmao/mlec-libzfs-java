@@ -227,7 +227,7 @@ void throwRuntimeException(JNIEnv *env, const char *message) {
 }
 
 JNIEXPORT void JNICALL Java_jni_Tools_writeRepairData
-  (JNIEnv *env, jobject thisObj, jstring poolName, jobject dnodeObj, jint stripeIdx, jint colIdx, jbyteArray data) {
+  (JNIEnv *env, jobject thisObj, jstring poolName, jobject dnodeObj, jint   , jint colIdx, jbyteArray data) {
     // TODO
     if (libzfs_core_init() != 0) {
         fprintf(stderr, "Can't init libzfs\n");

@@ -23,6 +23,7 @@ public class Runner {
             System.out.println("dcols: " + dnode.dcols);
             System.out.println("nparity: " + dnode.nparity);
             System.out.println("childStatus: " + dnode.childStatus);
+            System.out.println("-------");
         }
 
         System.out.println("====================");
